@@ -1,0 +1,2 @@
+README
+Algorithmic Trading Project
