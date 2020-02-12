@@ -46,7 +46,6 @@ def make_pipeline():
     total_revenue = Fundamentals.total_revenue.latest
     yesterday_close = EquityPricing.close.latest
     yesterday_volume = EquityPricing.volume.latest
-    growth_score = Fundamentals.growth_score.latest
     working_capital_per_share = Fundamentals.working_capital_per_share.latest
     forward_dividend_yield = Fundamentals.forward_dividend_yield.latest
     peg_ratio = Fundamentals.peg_ratio.latest
@@ -70,51 +69,46 @@ def make_pipeline():
     #----------------------------------------------------------------
 
     value_winsorized = value.winsorize(
-            min_percentile=0.05, 
+            min_percentile=0.10, 
             max_percentile=0.90)
     quality_winsorized = quality.winsorize(
-            min_percentile=0.05, 
+            min_percentile=0.10, 
             max_percentile=0.90)
     total_revenue_winsorized = total_revenue.winsorize(
-            min_percentile=0.05, 
+            min_percentile=0.10, 
             max_percentile=0.90)
     yesterday_close_winsorized = yesterday_close.winsorize(
-            min_percentile=0.05,         
+            min_percentile=0.10,         
             max_percentile=0.90)
     yesterday_volume_winsorized = yesterday_volume.winsorize(
-            min_percentile=0.05, 
-            max_percentile=0.90)
-    growth_score_winsorized = growth_score.winsorize(
-            min_percentile=0.05, 
+            min_percentile=0.10, 
             max_percentile=0.90)
     working_capital_per_share_winsorized =working_capital_per_share.winsorize(
-            min_percentile=0.05, 
+            min_percentile=0.10, 
             max_percentile=0.90)
     forward_dividend_yield_winsorized = forward_dividend_yield.winsorize(
-            min_percentile=0.05, 
+            min_percentile=0.10, 
             max_percentile=0.90)
     peg_ratio_winsorized = peg_ratio.winsorize(
-            min_percentile=0.06, 
+            min_percentile=0.10, 
             max_percentile=0.90)
     trailing_dividend_yield_winsorized = trailing_dividend_yield.winsorize(
-            min_percentile=0.05, 
+            min_percentile=0.10, 
             max_percentile=0.90)
     sentiment_score_winsorized = sentiment_score.winsorize(
-            min_percentile=0.05,
+            min_percentile=0.10,
             max_percentile=0.90)
     #---------------------------------------------------------------
     combined_factor = (
-        value_winsorized.zscore() +
+        value_winsorized.zscore()+
         quality_winsorized.zscore() +
         total_revenue_winsorized.zscore()+
-        yesterday_close_winsorized.zscore()+
         yesterday_volume_winsorized.zscore()+
-        growth_score_winsorized.zscore()+
-        working_capital_per_share_winsorized.zscore()+
-        forward_dividend_yield_winsorized.zscore()+
-        peg_ratio_winsorized.zscore()+
+        working_capital_per_share_winsorized.zscore()*2+
+        forward_dividend_yield_winsorized.zscore()*2+
+        peg_ratio_winsorized.zscore()*2+
         trailing_dividend_yield_winsorized.zscore()+
-        ((sentiment_score_winsorized.zscore()+test_sentiment.zscore())/2) 
+        ((sentiment_score_winsorized.zscore()+test_sentiment.zscore())/2)
     )
     #---------------------------------------------------------------
 
